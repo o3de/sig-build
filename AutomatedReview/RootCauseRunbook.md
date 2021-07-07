@@ -19,4 +19,4 @@ When a failure occurs in the Open 3d Engine (O3DE) main branch Automated Review 
 1. **Create a GitHub Issue from the "Automated Review" [template](https://github.com/aws-lumberyard/o3de/issues/new?assignees=&labels=&template=ar_bug_report-md.md&title=).**
 1. **Identify the issue's SIG owner and assign their respective label**
 1. **Complete the details in the GitHub Issue and add any additional labels**
-1. **Notifications will automatically be sent to the TODO Discord channel**
+1. **Notifications will automatically be sent to the Open 3D Foundation [Discord](https://discord.com/invite/xNb2q4SJKJ) #buildstatus channel**

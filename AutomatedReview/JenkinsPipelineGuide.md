@@ -24,7 +24,7 @@ Here is a summary of what happens after a user submits a pull request:
 
 1. GitHub creates a ref in the upstream repo based on the source branch of the pull request. This is what Jenkins uses to populate the build node workspace. 
 2. A reviewer/maintainer kicks off the AR to run the builds/tests.
-3. To generate the AR pipelinep, Jenkins merges the contents of the Jenkinsfile from the source branch with the target branch (e.g. development). This ensures incoming changes are running the latest checks and also allows incoming Jenkinsfile updates to be tested. 
+3. To generate the AR pipeline, Jenkins merges the contents of the Jenkinsfile from the source branch with the target branch (e.g. development). This ensures incoming changes are running the latest checks and also allows incoming Jenkinsfile updates to be tested. 
 4. The pipeline performs a sparse checkout on the controller to get the files used for pipeline options, scripts to setup the workspace, and other pre-build steps. 
 5. Some scripts from the sparse checkout are stashed so they can be used by the build nodes during the pre/post build steps. 
 6. After the workspace volume is mounted the build node performs the normal checkout of the repo and starts the build/test stages. 

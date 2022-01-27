@@ -37,7 +37,7 @@ Determining the source of the files used throughout the pipeline, can be confusi
 | Bootstrap files | Required during pipeline setup steps to load pipeline options, build configs, and setup scripts | Source branch |
 | Workspace contents | Repo contents pulled during a git checkout to run builds and tests | Source branch | 
 
-One important consideration when making an update that uses a new bootstrap file, is that other pull requests will fail if they do not have that file in their branch after your change is merged. This is because the updated Jenkinsfile will be used for their PR and will look for the file. But the file will be missing in their branch (i.e. they have not merged latest yet). 
+One important consideration is that all script references will be based on the state of the source branch. If you need to update the pipeline to use a new file, other pull requests will fail if they do not have that file in their branch.
 
 For non-blocking scripts, add a check to prevent the pipeline from attempting to load the script if it does not exist or only load the script if the associated pipeline is running. This will avoid blocking the AR on other pull requests if the file is not yet merged into their branch. 
 

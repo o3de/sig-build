@@ -16,6 +16,39 @@ Jenkins server url: https://jenkins.build.o3de.org/
       
 Add sig-build as an approver for all changes to the pipeline.
 
+### Pull Request Considerations
+
+When merging in changes to the Jenkinsfile, it's important to be aware of how Jenkins loads the pipeline files and how it can affect other users. 
+
+Here is a summary of what happens after a user submits a pull request:
+
+1. GitHub creates a ref in the upstream repo based on the source branch of the pull request. This is what Jenkins uses to populate the build node workspace. 
+2. A reviewer/maintainer kicks off the AR to run the builds/tests.
+3. To generate the AR pipeline, Jenkins merges the contents of the Jenkinsfile from the source branch with the target branch (e.g. development). This ensures incoming changes are running the latest checks and also allows incoming Jenkinsfile updates to be tested. 
+4. The pipeline performs a sparse checkout on the controller to get the files used for pipeline options, scripts to setup the workspace, and other pre-build steps. 
+5. Some scripts from the sparse checkout are stashed so they can be used by the build nodes during the pre/post build steps. 
+6. After the workspace volume is mounted the build node performs the normal checkout of the repo and starts the build/test stages. 
+
+Determining the source of the files used throughout the pipeline, can be confusing. Below is a summary of where Jenkins pulls the files used duing the AR runs:
+
+| File(s) | Description | Source |
+| ------- | --- | ------ |
+| Jenkinsfile | Pipeline definition file | Source branch with latest merged from Target branch |
+| Bootstrap files | Required during pipeline setup steps to load pipeline options, build configs, and setup scripts | Source branch |
+| Workspace contents | Repo contents pulled during a git checkout to run builds and tests | Source branch | 
+
+One important consideration is that all script references will be based on the state of the source branch. If you need to update the pipeline to use a new file, other pull requests will fail if they do not have that file in their branch.
+
+For non-blocking scripts, add a check to prevent the pipeline from attempting to load the script if it does not exist or only load the script if the associated pipeline is running. This will avoid blocking the AR on other pull requests if the file is not yet merged into their branch. 
+
+Example:
+```
+if (fileExists(SCRIPT_PATH)) {
+    stash name: 'script_name',
+        includes: SCRIPT_PATH
+}
+```
+
 ### Getting Help
 
 If you have any questions about the pipeline, reach out to the Build SIG by using the resources below:

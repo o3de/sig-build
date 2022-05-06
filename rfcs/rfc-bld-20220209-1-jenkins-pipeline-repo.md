@@ -33,7 +33,7 @@ AWS Hosting components:
 - CodePipeline: Coordinates the stages to run the server by detecting config changes, building the container image, and deploying the container to production.
 - Cloud Development Kit (CDK) Stacks: Automates the deployment of the resources required to host the service in AWS.
 
-![image](rfc-19-jenkins-pipeline-repo/workflow_diagram_1.png)
+![image](rfc-bld-20220209-1-jenkins-pipeline-repo/workflow_diagram_1.png)
 
 Deployment workflow:
  1. User submits a pull request to change one of the config files or scripts (e.g. dockerfile). After the PR is approved the change is merged into the repo.

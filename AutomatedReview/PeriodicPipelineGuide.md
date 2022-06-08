@@ -38,11 +38,12 @@ Pipeline URL: https://jenkins.build.o3de.org/job/O3DE_periodic-incremental-daily
 Below are the steps to run builds for certain platforms and build configurations of periodic pipeline. 
 
 1. Create a pull request at https://github.com/o3de/o3de.
-2. Go to https://jenkins.build.o3de.org/job/O3DE_periodic-incremental-daily/ and click "Pull Requests".
+2. If you are a maintainers/reviewer of O3DE, go to following steps, if not, ask a maintainer/reviewer to complete following steps. 
+3. Go to https://jenkins.build.o3de.org/job/O3DE_periodic-incremental-daily/ and click "Pull Requests".
    ![pull request](./images/periodic_pipeline_1.png)
-3. Click the PR number you just created, if this PR job never runs, click "Build Now" and the first build will do nothing but updating the job configuration, after first build is done, click "Build with Parameters".
-4. Add comma-separated build configurations in JOB_LIST_OVERRIDE, and select the platforms to build.
-5. Click Build button.
+4. Click the PR number you just created, if this PR job never runs, click "Build Now" and the first build will do nothing but updating the job configuration, after first build is done, click "Build with Parameters".
+5. Add comma-separated build configurations in JOB_LIST_OVERRIDE, and select the platforms to build.
+6. Click Build button.
 ![override_job_list](./images/periodic_pipeline_2.png)
 
 After these steps are done, follow the process of merging a PR to submit the fix.

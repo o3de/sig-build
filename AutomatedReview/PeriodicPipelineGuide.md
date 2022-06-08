@@ -10,6 +10,8 @@ Pipeline URL: https://jenkins.build.o3de.org/job/O3DE_periodic-incremental-daily
 
 ### Build Platforms and Configuration:
 
+Currently periodic incremental daily pipeline build following platforms and configurations.
+
 | Platform  | Build Configuration |
 | :---: | :---: |
 | Android  | debug  |
@@ -32,6 +34,10 @@ Pipeline URL: https://jenkins.build.o3de.org/job/O3DE_periodic-incremental-daily
 | Windows  | release  |
 | Windows  | monolithic_release  |
 | Windows  | install_profile_pipe  |
+
+If you want to add more platforms/build configurations to periodic incremental daily pipeline, add **periodic-incremental-daily** in build configuration's TAG list inside `scripts/build/Jenkins/Platform/<platform>/build_config.json`.
+
+See more instructions at https://github.com/o3de/sig-build/blob/main/AutomatedReview/JenkinsPipelineGuide.md
 
 ### Submit Fix to Periodic Incremental Daily Pipeline
 

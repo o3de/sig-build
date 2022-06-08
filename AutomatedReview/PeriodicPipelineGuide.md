@@ -12,8 +12,6 @@ Pipeline URL: https://jenkins.build.o3de.org/job/O3DE_periodic-incremental-daily
 
 | Platform  | Build Configuration |
 | :---: | :---: |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
 | Android  | debug  |
 | Android  | profile_nounity  |
 | Android  | release  |

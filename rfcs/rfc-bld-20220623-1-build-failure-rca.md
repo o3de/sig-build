@@ -36,15 +36,17 @@ Build failure RCA system is deployed by CDK, it can be easily deployed to differ
 
 Build failure RCA CDK Stack consists of following AWS resources:
 
-1. **Post Build SNS Topic:** SNS topic is used to receive post build message from AR/Periodic builds, and it triggers Lambda function to do build failure RCA.
+1. **Post Build SNS Topic:** SNS topic is used to receive post build message from AR/Periodic builds, and it feeds the data to SQS queue.
 
-2. **RCA Dispatcher Lambda Function:** RCA dispatcher lambda function is triggered by post build SNS topic, it retrieves AR/Periodic build data and dispatch the actual RCA work for each build platform/configuration to separate lambda functions. Once it received the RCA result from RCA worker lambda function, it uploads the RCA result to CloudWatch. If notification is enabled, it will send build failure notifications via email, Discord or Slack.
+2. **SQS Queue:** In case SNS topic reaches rate limiting and discard unprocessed data, SQS queue is used to receive post build message from Post Build SNS Topic, and it triggers Lambda function to do build failure RCA.
 
-3. **RCA Worker Lambda Function:** RCA worker lambda function retrieves build log of a certain build platform/configuration, it scans the build log and search for log messages that match build failure RCA patterns, once the RCA work is done, it uploads the build log to S3 and return RCA result to RCA dispatcher lambda function.
+3. **RCA Dispatcher Lambda Function:** RCA dispatcher lambda function is triggered by post build SNS topic, it retrieves AR/Periodic build data and dispatch the actual RCA work for each build platform/configuration to separate lambda functions. Once it received the RCA result from RCA worker lambda function, it uploads the RCA result to CloudWatch. If notification is enabled, it will send build failure notifications via email, Discord or Slack.
 
-4. **Build Log S3 Bucket:** Build log S3 bucket is used to store build logs grouped by build platform/configuration.
+4. **RCA Worker Lambda Function:** RCA worker lambda function retrieves build log of a certain build platform/configuration, it scans the build log and search for log messages that match build failure RCA patterns, once the RCA work is done, it uploads the build log to S3 and return RCA result to RCA dispatcher lambda function.
 
-5. **CloudWatch Metrics:** CloudWatch metrics is used to store build failure RCA result.
+5. **Build Log S3 Bucket:** Build log S3 bucket is used to store build logs grouped by build platform/configuration.
+
+6. **CloudWatch Metrics:** CloudWatch metrics is used to store build failure RCA result.
 
 #### CDK Deployment pipeline
 The CDK deployment pipeline is a Jenkins pipeline that deploys build failure RCA CDK stack on build failure RCA repo change events.
@@ -124,7 +126,63 @@ to get the build log of a certain build platform/configuration.
 #### Build Failure RCA Patterns
 RCA worker lambda function scans the build log and search for log messages that match build failure RCA patterns.
 
-Current build RCA patterns from https://github.com/aws-lumberyard/build-failure-rca/tree/main/build-failure-rca/rca-patterns can be reused.
+Build failure RCA pattern is in below JSON format:
+- **name:** Name of the build failure pattern.
+- **description:** Description of the pattern, it's used to describe the build failure.
+- **comment:** Comment to the build failure pattern.
+- **category:** Build failure category.
+- **single_line:** Log pattern regex tries to match single line if this is true, otherwise, Log pattern regex tries to match multi-lines.
+- **find_all:** Find all occurrences that match log patterns if this is ture, otherwise, it stops searching on first occurrence.
+- **log_patterns:** A list of regex string to match with the build logs.
+- **log_testcases:** Test cases that are used to validate the pattern regex.
+- **owners:** A list of failure owners. If a value starts with @, a customized function will be executed and return the owner. For example, if a value is @asset_processing, a customized function asset_processing will read the parsed error message and return the owner of failed asset file.
+
+Example of a RCA pattern that matches single line, and it will find all occurrences.
+```
+{
+  "indications": [
+    {
+      "name": "Asset Processing",
+      "description": "Asset Processing error",
+      "comment": "Asset Processing error, see log for more details",
+      "single_line": true,
+      "find_all": true,
+      "log_patterns": [
+        "^.*AssetProcessor: JOB LOG:.*ERROR.*$"
+      ],
+      "log_testcases": [
+        "AssetProcessor: JOB LOG: 5/26/2021 10:11 PM | ERROR"
+      ],
+      "owners": [
+        "@asset_processing"
+      ]
+    }
+  ]
+}
+```
+Example of a RCA pattern that matches multi line, and it will stop searching after first occurrence is found.
+```
+{
+  "indications": [
+    {
+      "name": "CTest failure(s)/error(s)",
+      "description": "Errors while running CTest",
+      "comment": "Errors while running CTest",
+      "single_line": false,
+      "find_all": false,
+      "log_patterns": [
+        "The following tests FAILED:.*Errors while running CTest"
+      ],
+      "log_testcases": [
+        "The following tests FAILED:"
+      ],
+      "owners": [
+        "@ctest"
+      ]
+    }
+  ]
+}
+```
 
 #### Workflow
 ![workflow](rfc-bld-20220623-1-build-failure-rca/workflow.png)
@@ -133,11 +191,12 @@ Current build RCA patterns from https://github.com/aws-lumberyard/build-failure-
 2. The build failure RCA CDK deployment pipeline deploys build failure RCA CDK stack to AWS accounts that are using build failure RCA system.
 3. Change in O3DE repo or O3DE fork repo triggers the AR or Periodic builds.
 4. After each AR or Periodic build completes, it publishes build data to post build SNS topic.
-5. Post build SNS topic triggers the RCA dispatcher lambda function.
-6. RCA dispatcher lambda function retrieves AR/Periodic build data and dispatch the actual RCA work for each build platform/configuration to separate RCA worker lambda functions. 
-7. RCA worker lambda function retrieves build log of a certain build platform/configuration, it scans the build log and search for log messages that match build failure RCA patterns, once the RCA work is done, it uploads the build log to S3 and return RCA result to RCA dispatcher lambda function.
-8. Once RCA dispatcher received the RCA result from RCA worker, it uploads the RCA result to CloudWatch metrics.
-9. Once RCA dispatcher received the RCA result from RCA worker, it sends build failure notifications via email, Discord or Slack.
+5. Post build SNS topic send post build data to SQS queue.
+6. SQS queue triggers the RCA dispatcher lambda function.
+7. RCA dispatcher lambda function retrieves AR/Periodic build data and dispatch the actual RCA work for each build platform/configuration to separate RCA worker lambda functions. 
+8. RCA worker lambda function retrieves build log of a certain build platform/configuration, it scans the build log and search for log messages that match build failure RCA patterns, once the RCA work is done, it uploads the build log to S3 and return RCA result to RCA dispatcher lambda function.
+9. Once RCA dispatcher received the RCA result from RCA worker, it uploads the RCA result to CloudWatch metrics.
+10. Once RCA dispatcher received the RCA result from RCA worker, it sends build failure notifications via email, Discord or Slack.
 
 ### What are the advantages of the feature?
 - It offloads build failure RCA work from Jenkins server to lambda functions, and thus reduce loads on Jenkins server.
@@ -164,4 +223,4 @@ Yes, an alternative is to write a Jenkins plugin that can offload build failure 
 - Can this build failure RCA system be used for any Jenkins pipeline build other than O3DE builds?
   - Yes, this biuld failure RCA system is not tied to O3DE builds, it can be used in any Jenkins pipeline build.
     
-
+- How do you hand

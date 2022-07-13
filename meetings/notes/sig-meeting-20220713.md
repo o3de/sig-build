@@ -16,7 +16,7 @@ No updates
 ## Meeting Agenda
 
 
-### support in the build system for VS2022: https://github.com/o3de/o3de/issues/6707
+### Support in the build system for VS2022: https://github.com/o3de/o3de/issues/6707
 - Build node created with VS2022 installed. Currently testing in a branch.
 - There is one issue with the filter in the cmake detection. This will need to be updated. 
 
@@ -24,7 +24,7 @@ No updates
 ### Validation step in front of the parallel build pipeline
 - The job was updated to run on a Linux node
 - Discovered that the unmount step on the linux nodes were pointing to the wrong folder causing a timeout. A change will also be madeo the to the incremental build script.
-- The update will add about 4-5min time to AR runtime.
+- The update will add about 4-5min time to AR runtime, however the fix to the inc build script will offset this. 
 
 
 ### Build Failure Analysis improvements
@@ -32,7 +32,7 @@ No updates
 - Will also start work on the Lambda functions. 
 
 
-###  New o3de-extras and canonical.o3de.org repo and workflow
+### New o3de-extras and canonical.o3de.org repo and workflow
 - New repos created
   - https://github.com/o3de/o3de-extras
   - https://github.com/o3de/canonical.o3de.org

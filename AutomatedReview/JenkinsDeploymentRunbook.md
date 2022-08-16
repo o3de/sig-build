@@ -56,7 +56,7 @@ git checkout <branch-name> <file-name>
 
 ## Monitoring Deployments
 
-While a deployment is underway, its progress can be viewed in CodePipeline.
+Build SIG maintainers that have access to the AWS account can view the progress of the deployment in CodePipeline.
 
 There are 3 main sections to the pipeline:
 

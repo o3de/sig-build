@@ -49,39 +49,39 @@ In conjunction with SIG-Platform, the general policy will be:
 | OS  | Version | Environment | Notes |
 | --- | --- | --- | --- |
 | Windows | 2019 1809 (eqv Windows 10 20H2) | AR  |
-| Windows | 2022 21H2 (eqv Windows 11 21H2) | Nightly | Planned |
+| Windows | 2022 21H2 (eqv Windows 11 21H2) | periodic-daily | Planned |
 | Ubuntu | 20.04 LTS | AR  |
-| Ubuntu | 22.04 LTS | Nightly | Planned |
+| Ubuntu | 22.04 LTS | periodic-daily | Planned |
 | MacOS | Big Sur | AR  |
-| MacOS | Monterey | Nightly | Planned |
+| MacOS | Monterey | periodic-daily | Planned |
 
 #### Build Systems/Compiler
 
 | Build System | Version | Compiler | Version | OS  | Environment |
 | --- | --- | --- | --- | --- | --- |
 | Visual Studio | 2022 17.3.0 | MSVC | v143 | Windows 2019 | AR  |
-| Visual Studio | 2019 16.9.2 | MSVC | v142 | Windows 2019 | Nightly |
+| Visual Studio | 2019 16.9.2 | MSVC | v142 | Windows 2019 | periodic-daily |
 | Ninja | 1.10.0 | Clang/LLVM | 12  | Ubuntu 20.04 | AR  |
-| Ninja | 1.10.1 | Clang/LLVM | 14  | Ubuntu 22.04 | Nightly |
-| Ninja | 1.10.0 | GCC | 9.3.0 | Ubuntu 20.04 | Nightly |
-| Ninja | 1.10.1 | GCC | 11.2.0 | Ubuntu 22.04 | Nightly |
+| Ninja | 1.10.1 | Clang/LLVM | 14  | Ubuntu 22.04 | periodic-daily |
+| Ninja | 1.10.0 | GCC | 9.3.0 | Ubuntu 20.04 | periodic-daily |
+| Ninja | 1.10.1 | GCC | 11.2.0 | Ubuntu 22.04 | periodic-daily |
 | XCode | 13.2 | Clang/LLVM | 12  | MacOS Big Sur | AR  |
-| XCode | 13.4 | Clang/LLVM | 13  | MacOS Monterey | Nightly |
+| XCode | 13.4 | Clang/LLVM | 13  | MacOS Monterey | periodic-daily |
 
 #### SDK
 
 | SDK Type | Package Versions | OS  | Environment |
 | --- | --- | --- | --- |
-| Android SDK | "platforms;android-28" "platforms;android-29" "platforms;android-30" | Windows 2019 | AR and Nightly |
-| Android NDK | '"ndk;21.4.7075529"' | Windows 2019 | AR and Nightly |
-| Android Google Play Packages | '"extras;google;market\_apk\_expansion" "extras;google;market\_licensing"' | Windows 2019 | AR and Nightly |
-| Android Build Tools | '"build-tools;30.0.2" | Windows 2019 | AR and Nightly |
+| Android SDK | "platforms;android-28" "platforms;android-29" "platforms;android-30" | Windows 2019 | AR and periodic-daily |
+| Android NDK | '"ndk;21.4.7075529"' | Windows 2019 | AR and periodic-daily |
+| Android Google Play Packages | '"extras;google;market\_apk\_expansion" "extras;google;market\_licensing"' | Windows 2019 | AR and periodic-daily |
+| Android Build Tools | '"build-tools;30.0.2" | Windows 2019 | AR and periodic-daily |
 
 #### Tools
 
 | Tool Type | Package Versions | OS  | Environment |
 | --- | --- | --- | --- |
-| CMake | 3.24.0 | Windows 2019 | AR and Nightly |
-| CMake | 3.24.0 | Ubuntu 20.04 | AR and Nightly |
-| CMake | 3.24.0 | Ubuntu 22.04 | AR and Nightly |
-| CMake | 3.24.0 | MacOS Big Sur | AR and Nightly |
+| CMake | 3.24.0 | Windows 2019 | AR and periodic-daily |
+| CMake | 3.24.0 | Ubuntu 20.04 | AR and periodic-daily |
+| CMake | 3.24.0 | Ubuntu 22.04 | AR and periodic-daily |
+| CMake | 3.24.0 | MacOS Big Sur | AR and periodic-daily |

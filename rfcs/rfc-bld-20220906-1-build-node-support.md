@@ -19,7 +19,7 @@ These are currently AWS EC2 AMI (Amazon Machine Image) that contain dependencies
 *   Compilers/Backends - MSVC, LLVM, GCC
 *   Build systems/Frontends - Visual Studio (MSBuild), Ninja, Clang, XCode
 *   Pre-build tools - System Python (including PyPi packages), CMake
-*   Platform specific SDK - Android SDK
+*   Platform specific SDK - Android SDK/NDK
 *   Build/Test specific tools - Git/Git LFS
 
 ### Support priority
@@ -52,7 +52,7 @@ In conjunction with SIG-Platform, the general policy will be:
 | Windows | 2022 21H2 (eqv Windows 11 21H2) | periodic-daily | Planned |
 | Ubuntu | 20.04 LTS | AR  |
 | Ubuntu | 22.04 LTS | periodic-daily | Planned |
-| MacOS | Big Sur | AR  |
+| MacOS | Big Sur | periodic-daily  |
 | MacOS | Monterey | periodic-daily | Planned |
 
 #### Build Systems/Compiler
@@ -65,7 +65,7 @@ In conjunction with SIG-Platform, the general policy will be:
 | Ninja | 1.10.1 | Clang/LLVM | 14  | Ubuntu 22.04 | periodic-daily |
 | Ninja | 1.10.0 | GCC | 9.3.0 | Ubuntu 20.04 | periodic-daily |
 | Ninja | 1.10.1 | GCC | 11.2.0 | Ubuntu 22.04 | periodic-daily |
-| XCode | 13.2 | Clang/LLVM | 12  | MacOS Big Sur | AR  |
+| XCode | 13.2 | Clang/LLVM | 12  | MacOS Big Sur | periodic-daily  |
 | XCode | 13.4 | Clang/LLVM | 13  | MacOS Monterey | periodic-daily |
 
 #### SDK
@@ -84,4 +84,4 @@ In conjunction with SIG-Platform, the general policy will be:
 | CMake | 3.24.0 | Windows 2019 | AR and periodic-daily |
 | CMake | 3.24.0 | Ubuntu 20.04 | AR and periodic-daily |
 | CMake | 3.24.0 | Ubuntu 22.04 | AR and periodic-daily |
-| CMake | 3.24.0 | MacOS Big Sur | AR and periodic-daily |
+| CMake | 3.24.0 | MacOS Big Sur | periodic-daily |

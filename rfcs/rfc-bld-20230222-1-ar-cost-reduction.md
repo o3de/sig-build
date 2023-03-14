@@ -9,9 +9,9 @@ The purpose of this RFC is to outline SIG-Build’s plan to reduce O3DE’s infr
 
 We use the AR as our primary mechanism to test commits for PRs submitted to O3DE. The jobs within the AR execute builds and tests for several platforms and all of them must pass before the PR is merged. We also utilize the AR to run the same set of jobs post-merge on the target branch (e.g. development). Then there are other jobs that run on a daily and weekly cadence that provide coverage not included in the AR.
 
-One major concern is the total number of times we run the AR for the number of PRs we receive. Not only do we require an AR run for every submitted PR, but also about half of the PRs require more than one AR run before all the jobs succeed. This can be the result of an error caught by the AR or the result of a flaky test both of which require another AR run.
+The main concern is that our infrastructure costs have increased 53% since O3DE's launch. One contributing factor is the total number of times we run the AR for the number of PRs we receive. We require an AR run for every submitted PR and about half of the PRs require more than one AR run before all the jobs succeed. Another factor is the cost of our current build resources. Due to the size of our project, higher spec build resources were selected to maintain acceptable build times. However, we are now willing to accept longer build times in favor for lower cost resources. At the same time, we will investigate ways to mitigate this impact. 
 
-The total number of AR runs combined with its total runtime contribute to O3DE’s rising infrastructure costs. Additionally, the current configuration of the AR makes it expensive to run and difficult for SIG-Build to onboard new platforms without exceeding our spending targets. 
+The total number of AR runs combined with the setup of our build resources contribute to O3DE’s rising infrastructure costs. Additionally, the current configuration of the AR makes it expensive to run and difficult for SIG-Build to onboard new platforms without exceeding our spending targets. 
 
 This also limits our ability to scale and introduce new features to improve developer velocity. As our incoming contributions increase, so do our costs by a significant amount.  
 
@@ -31,7 +31,9 @@ We will also investigate using a merge queue in order to significantly reduce th
 
 ### Utilize lower cost build resources
 
-Addressing the runtimes and stability of the AR will allow us to migrate some of the jobs to lower cost build resources. This will include utilizing lower spec instances in our current infrastructure and also hosted platforms like GitHub Actions. 
+There is a free build resource provided by the CNCF Community Infrastructure Lab (CIL) that is available for open source projects. SIG-Build will investigate onboarding our project to this resource. There is a pool of build resources that are shared between CNCF projects, member companies, and other open source projects, so usage is not unlimited. Additionally, they may request to reduce usage when there is a high demand for build credits. More info is located here: https://www.cncf.io/community-infrastructure-lab/ 
+
+Addressing the runtimes and stability of the AR will allow us to migrate some of the jobs to lower cost build resources. In addition to resources like the CNCF CIL, we will also investigate using hosted platforms like GitHub Actions. 
 
 One benefit of integrating GitHub Actions in our PR workflow is that we can take advantage of GitHub's hosted runners. This provides a cost benefit since the hosted runners are free to use for public repos like O3DE. They are lower spec machines, so optimizing our AR configuration is critical to onboarding to this service. 
 
@@ -41,7 +43,7 @@ Also once we implement a merge queue, using GitHub Actions will allow us to run 
 
 ### Revisit our testing approach in the PR workflow
 
-A very importance aspect of reducing our costs is revisiting our approach to setting up our build and test targets in the AR. This investigation will be driven by SIG-Build in collaboration will the other SIGs to determine how to get the best value from the AR.
+A very important aspect of reducing our costs is revisiting our approach to setting up our build and test targets in the AR. This investigation will be driven by SIG-Build in collaboration will the other SIGs to determine how to get the best value from the AR.
 
 One major item we will need to review is how we currently setup our builds and tests in a single job that covers all the targets for that platform. We will need to identify what is the best way to setup our build and test targets and if we can split up our targets into separate jobs.
 
@@ -74,17 +76,17 @@ In this phase we will address the cost inefficiencies in our current setup. Here
 _Phase 1 Cost Improvements:_
 
 * Optimize the use of our current infrastructure and AR setup.
-* Integrate S3SIS into our build process. This will also minimize our EBS usage and improve our caching options on hosted platforms. 
+* Integrate S3SIS into our build process (more details on this below). This will also minimize our EBS usage and improve our caching options on hosted platforms. 
 * Reduce build/test runtimes. The purpose of this is to reduce cost and prepare the migrate of our workflows to GitHub actions.
 * Investigate how we can split up build and test targets so we can onboard our jobs to lower cost resources.
 
 ## Phase 2
 
-In phase 2 we will start the work to onboard our time insensitive workflows to GitHub actions. This will allow SIG-Build to test how our checks will perform running on GitHub’s hosted runners. We will also investigate using [GitHub’s merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue) in our PRs. 
+In phase 2 we will start the work to onboard our time insensitive workflows to lower cost resources (e.g. CNCF resources, GitHub actions). This will allow SIG-Build to test how our checks will perform on lower spec machines. We will also investigate using [GitHub’s merge queue](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/configuring-pull-request-merges/managing-a-merge-queue) in our PRs. 
 
 _Phase 2 Cost Improvements:_
 
-* Onboard time-insensitive workflows to GitHub actions using their hosted runners. This will include daily, weekly, and development branch checks. 
+* Onboard time-insensitive workflows to lower cost hosted runners. This will include daily, weekly, and development branch checks. 
 * Reduce total number of AR runs by integrating a merge queue. 
 
 ## Phase 3
@@ -130,6 +132,24 @@ For the 22.10 release we saw a high AR failure rate (48%) and total runs (2.2 av
 Below is the percentage of each AR result for the 22.10 release branch. About half of the attempts ended in failure with a total number of 228 AR runs. 
 
 ![image](rfc-bld-20230222-1-ar-cost-reduction/ar_results.png)
+
+## Optimize AR Infrastructure
+
+The main source of our AR infrastructure costs are AWS EC2 and EBS. Our Jenkins build nodes are hosted on EC2 instances and the workspaces are stored on EBS volumes. When an AR run is triggered, an EC2 instance for each platform is started and an EBS volume is created using the latest snapshot from the development branch. When the build is completed the instance is terminated and the volume is retained to speed up subsequent builds which is deleted after 24 hours of inactivity or when the PR is merged. 
+
+### EC2 instances
+
+We use c5a.4xlarge (16 vCPU) instances for our build nodes which costs $1.352/hr for Windows and $0.616/hr for Linux with on-demand pricing. There are a total of 6 jobs in the AR with 5 running on Windows and 1 on Linux. In addition to reducing the spec of our machines for lower costs, we will be investigating ways to optimize our build times and narrowing the scope of our build/test targets we reduce the impact of running on lower spec machines.
+
+### EBS volume usage
+
+We use 300GB EBS volumes for the workspace for each job in the AR which provides enough space for all files pulled from the repo and the generated build artifacts. Separate volumes are also created for the AR run for each pull request. The costs come from the number and size of the volumes in addition to the amount of time they kept online. While we terminate each instance after the build, the volumes are deleted after 24 hours of inactivity. To lower costs, we can delete the volumes immediately after each build and implement other mechanisms to cache build artifacts.
+
+### S3SIS
+
+S3SIS (Single Instance Storage) is a tool that we can use to cache our build artifacts. This will allow us to terminate the volumes after each build and reduce our EBS costs. 
+
+- More info here: https://github.com/o3de/o3de/pull/14219
 
 ## Reduce Build and Test Runtime
 

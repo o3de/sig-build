@@ -215,3 +215,28 @@ There's some cons however:
     - *Mitigation:* Older supported platforms will be augmented by self-hosted runners
 *   We're at the mercy of Github for any support and if Github itself goes down, then users pulling 3p from an installed version of O3DE may get blocked. 
     - *Mitigation:* We will still use our current Cloudfront/S3 CDN on [o3debinaries.org](http://o3debinaries.org) as a backup, but other CDNs can be used as a potential mirror. This is controlled by the CDN list in [https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32](https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32)
+
+License Security Considerations
+-------------------------
+*   How to we prevent supply chain attacks?
+    - Github Action trigger abuse
+        - *Potential threat:* Threat actors DDoSing Github Actions or causing it to trigger automatically and merge without review
+        - *Mitigation:* Only maintainers will be able to trigger the GHA manually. We require a PR of the contribution before it is merged, and must be signed off by 2 people
+    - Remote execution on Github Action
+        - *Potential threat:* Threat actors injecting remote execution code or binaries into the package
+        - *Mitigation:* Static analysis and virus scan is performed on the code and any binary artifacts. The package itself should be vetted by a maintainer (the code should come from the original repo), and any CVEs are resolved before moving to the AR stage
+    - Man in the Middle (MitM) attacks on the package transmission
+        - *Potential threat:* The CDN address is changed or redirected to a new domain owned by a threat actor
+        - *Mitigation:* The CDN address is using HTTPS and will warn if the SSL certificate doesn't match. The 3P downloader will not pull packages on SSL mismatch. The SSL certificate itself is owned by the Linux Foundation (through a domain provider) and has named maintainers
+    - Existing package modified by a threat actor
+        - *Potential threat:* An existing package is modified by a threat actor and reuploaded to Github Packages
+        - *Mitigation:* Github Packages does not allow overwrite of an existing package. In addition, the container is signed through a trust chain to SigStore. Finally, the `tar.xz` file's hash is part of the metadata list file (example: https://github.com/o3de/o3de/blob/development/cmake/3rdParty/Platform/Windows/BuiltInPackages_windows.cmake), which will not match if modified. The 3P downloader will not extract and utilize a package if there is a hash mismatch.
+
+*   How do we prevent package contributions with licenses incompatible with the O3DE project?
+    - License incompatiblity
+        - *Potential threat:* A contributor submits a package with a commercial or incompatible license
+        - *Mitigation:* All packages are recommended to be MIT/Apache 2.0 licensed, though expections can be granted with TSC approval. Maintainers will be expected to validate this through manual and automated means
+    - Incorrect licenses
+        - *Potential threat:* A contributor submits a package without a license or misattributes the license
+        - *Mitigation:* All packages will be scanned for SPDX headers. A metadata file (`build_config.json`) should be included in each package to be built, which will conatin the SPDX license shortname. An additonal automated scan will be performed during the build process to look for license files and will alert the maintainers if a mismatch is found.
+        

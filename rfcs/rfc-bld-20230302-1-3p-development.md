@@ -134,7 +134,6 @@ $~$
 
 1.  Contributors fork/branch the source and GitHub action scripts from the 3p-package-source repo
 2.  During development they can build and package in their "dev" bucket on Github packages using a Github Action build step contained in the fork  
-    
 3.  The build step uses a Github Action to execute a build script (currently the `[build_packages.py](https://github.com/o3de/3p-package-scripts/blob/main/o3de_package_scripts/build_package.py)` script but can be agnostic), which will consume a primary metadata file for each platform  
     1.  This primary metadata file will be part of contribution prior to the build (currently the [`package_build_host_list_<platform>.json`](https://github.com/o3de/3p-package-source/blob/main/package_build_list_host_windows.json) file), which will define custom steps specific to each package
     2.  The package source path could include **`PackageInfo.json`**, a metadata file containing package version and licenses, but one can be generated as part of the build
@@ -149,7 +148,6 @@ $~$
     1.  Prechecks via Github Actions will get triggered on PR creation to validate the **`PackageInfo.json`** file for completeness and the license indicated in the file is "blessed" by the project.
     2.  Recursive dependencies and licenses **should** be called out, but a secondary license check using [Scancode Toolkit](https://github.com/nexB/scancode-toolkit) may be needed to validate
 2.  A maintainer will manually execute the build step in Github Actions once all prechecks are green. An automated comment referencing a codeowners approval group can be added to the PR, which would notify maintainers.  
-    
 3.  If the build fails, the 3P Package PR is kicked back for re-work
 4.  Once the build step is complete, the package is automatically uploaded to Github packages for the O3DE org. The 3P package PR should be merged into 3p-package-source.
 5.  A download location and hash of the package will be generated in the build output. The package is now staged for consumption in a Pull Request for O3DE AR, but not ready for use in production
@@ -209,7 +207,11 @@ The advantages to this approach:
 $~$
 
 There's some cons however:
-*   Because the development package output is decentralized, we won't have a central "development" S3 bucket. This means a contributor will have to ensure that they add the Github packages URL for their fork to the the list of CDN urls to be pulled via cmake.
-*   Github Actions uses a containerized infrastructure, with limited specs - something on the order of [2 CPUs with 7 GB RAM](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources) with 19~30GB of SSD storage. Large packages like QT and Python may take hours to build. There may be ways to utilize Linux Foundation's hardware as "agents" (called self-hosted runners) for Github Actions if we need higher specs
-*   Support for versions of OS is on a ["window" of releases](https://github.com/actions/virtual-environments#available-environments). Some OS versions will fall out of support, which will have to be augmented by self-hosted runners
-*   We're at the mercy of Github for any support and if Github itself goes down, then users pulling 3p from an installed version of O3DE may get blocked. A supplementary CDN hosting on [o3debinaries.org](http://o3debinaries.org) could be a potential backup. This is controlled by the CDN list in [https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32](https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32)
+*   Because the development package output is decentralized, we won't have a central "development" S3 bucket. 
+    - *Mitigation:* This means a contributor will have to ensure that they add the Github packages URL for their fork to the the list of CDN urls to be pulled via cmake for iterative development.
+*   Github Actions uses a containerized infrastructure, with limited specs - something on the order of [2 CPUs with 7 GB RAM](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources) with 19~30GB of SSD storage. Large packages like QT and Python may take hours to build. 
+    - *Mitigation:* There may be ways to utilize Linux Foundation's hardware as "agents" (called self-hosted runners) for Github Actions if we need higher specs
+*   Support for versions of OS is on a ["window" of releases](https://github.com/actions/virtual-environments#available-environments). Some OS versions will fall out of support.
+    - *Mitigation:* Older supported platforms will be augmented by self-hosted runners
+*   We're at the mercy of Github for any support and if Github itself goes down, then users pulling 3p from an installed version of O3DE may get blocked. 
+    - *Mitigation:* We will still use our current Cloudfront/S3 CDN on [o3debinaries.org](http://o3debinaries.org) as a backup, but other CDNs can be used as a potential mirror. This is controlled by the CDN list in [https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32](https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32)

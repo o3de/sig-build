@@ -216,7 +216,7 @@ There's some cons however:
 *   We're at the mercy of Github for any support and if Github itself goes down, then users pulling 3p from an installed version of O3DE may get blocked. 
     - *Mitigation:* We will still use our current Cloudfront/S3 CDN on [o3debinaries.org](http://o3debinaries.org) as a backup, but other CDNs can be used as a potential mirror. This is controlled by the CDN list in [https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32](https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32)
 
-License Security Considerations
+Security and license Considerations
 -------------------------
 *   How to we prevent supply chain attacks?
     - Github Action trigger abuse

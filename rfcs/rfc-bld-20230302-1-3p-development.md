@@ -138,8 +138,8 @@ $~$
 3.  The build step uses a Github Action to execute a build script (currently the `[build_packages.py](https://github.com/o3de/3p-package-scripts/blob/main/o3de_package_scripts/build_package.py)` script but can be agnostic), which will consume a primary metadata file for each platform  
     1.  This primary metadata file will be part of contribution prior to the build (currently the [`package_build_host_list_<platform>.json`](https://github.com/o3de/3p-package-source/blob/main/package_build_list_host_windows.json) file), which will define custom steps specific to each package
     2.  The package source path could include **`PackageInfo.json`**, a metadata file containing package version and licenses, but one can be generated as part of the build
-4.  If the build step succeeds, a separate Github Actions step will create the OCI image from the output, then upload it to Github Packages. A download location and hash of the package will be generated in the build output. 
-5.  To allow a developer to consume their own packages, they would add the Github Packages CDN URL in [cmake/3rdPartyPackages.cmake](https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32) or add to the **`LY_PACKAGE_SERVER_URLS`** environment variable  
+4.  If the build step succeeds, a separate Github Actions step will create the OCI image from the output, then upload it to Github Packages. This will be contained inside the contributor's Github account if forked. A download location and hash of the package will be generated in the build output. 
+5.  To allow a developer to consume their own packages, they would add the Github Packages CDN URL for their fork in [cmake/3rdPartyPackages.cmake](https://github.com/o3de/o3de/blob/development/cmake/3rdPartyPackages.cmake#L32) or add to the **`LY_PACKAGE_SERVER_URLS`** environment variable  
 
 $~$
 
@@ -222,8 +222,8 @@ Security and license Considerations
 *   How do we prevent supply chain attacks?
 
     - Github Action trigger abuse
-        - *Potential threat:* Threat actors DDoSing Github Actions or causing it to trigger automatically and merge without review
-        - *Mitigation:* Only maintainers will be able to trigger the GHA manually. We require a PR of the contribution before it is merged, and must be signed off by 2 people
+        - *Potential threat:* Threat actors DDoSing Github Actions or causing it to trigger automatically and build without review
+        - *Mitigation:* Only maintainers will be able to trigger the GHA manually to build the package. Builds will not be triggered automatically. We require a PR of the contribution before it is merged, and must be signed off by 2 people
     - Remote execution on Github Action
         - *Potential threat:* Threat actors injecting remote execution code or binaries into the package
         - *Mitigation:* Static analysis and virus scan is performed on the code and any binary artifacts. The package itself should be vetted by a maintainer (the code should come from the original repo), and any CVEs are resolved before moving to the AR stage

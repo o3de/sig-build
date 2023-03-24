@@ -218,7 +218,8 @@ There's some cons however:
 
 Security and license Considerations
 -------------------------
-*   How to we prevent supply chain attacks?
+*   How do we prevent supply chain attacks?
+
     - Github Action trigger abuse
         - *Potential threat:* Threat actors DDoSing Github Actions or causing it to trigger automatically and merge without review
         - *Mitigation:* Only maintainers will be able to trigger the GHA manually. We require a PR of the contribution before it is merged, and must be signed off by 2 people

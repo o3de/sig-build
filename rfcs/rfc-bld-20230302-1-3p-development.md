@@ -10,7 +10,8 @@ The current system using Jenkins and AWS S3 helped bootstrap our move for our 3r
 
 Internally, we did this to thoroughly verify legacy packages for NDA'ed code. However, these components (specifically 2, 3, 5) are not visible to the public and cannot be directly contributed or packaged without having access to the internal systems.
 
-We aim to make this public and the intake process transparent, as the community currently has no direct means to make contributions. In order to do this, we will need a end to end workflow that accomplishes the following:
+We aim to make this public and the intake process transparent, as the community currently has no direct means to make contributions. In order to do this, we will need an end to end workflow that accomplishes the following:
+
 
 1.  Does not involve any internal-only tooling infrastructure
 2.  Can run CI/CD under the same scope as the fork or branch, to allow for development independent of the production infrastructure

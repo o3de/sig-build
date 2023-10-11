@@ -1,5 +1,5 @@
-# Jenkins Deployment Runbook
-The purpose of this runbook is to instruct Build SIG maintainers how to trigger a deployment of the O3DE Jenkins server. Deployments are automated by the pipeline detailed here: [O3DE Jenkins Pipeline Repo RFC](https://github.com/o3de/sig-build/blob/main/rfcs/rfc-bld-20220209-1-jenkins-pipeline-repo.md)
+# Jenkins Deployment Guide
+The purpose of this guide is to instruct Build SIG maintainers how to trigger a deployment of the O3DE Jenkins server. Deployments are automated by the pipeline detailed here: [O3DE Jenkins Pipeline Repo RFC](https://github.com/o3de/sig-build/blob/main/rfcs/rfc-bld-20220209-1-jenkins-pipeline-repo.md)
 
 ## Getting Started 
 

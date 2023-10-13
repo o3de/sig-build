@@ -8,9 +8,6 @@ To get started, clone the o3de-jenkins-pipeline repo and review the setup instru
 
 - Repo: https://github.com/o3de/o3de-jenkins-pipeline/ 
 
-
-
-
 ## Testing
 
 Testing can be completed on a docker container running on your machine in addition to the sandbox instance.
@@ -113,7 +110,6 @@ After the start up scripts are executed and Jenkins starts, it also performs the
 - Uses the JCasC plugin to load the config files and job DSL scripts. The CASC_JENKINS_CONFIG environment variable is used to tell the plugin where to find the files. 
     - The env var is set to ${JENKINS_LOCAL}/configs in our Dockerfile. 
     - This is moved off the default location of $JENKINS_HOME to avoid stale configs when the config files are updated. 
-
 
 
 ## Jenkins Configuration as Code

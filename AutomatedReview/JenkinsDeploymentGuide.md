@@ -46,6 +46,9 @@ docker run -d -p 8080:8080 --mount type=volume,target=/var/jenkins_home,source=<
 
 # Example with AWS credentials
 docker run -e "AWS_REGION=us-west-2" -e <AWS_ACCESS_KEY_ID> -e <AWS_SECRET_ACCESS_KEY> -d -p 8080:8080 --mount type=volume,target=/var/jenkins_home,source=<volume-name> jenkins
+
+# Example with updated Java heap size. Useful when testing locally. Default is 8g.
+docker run -e JAVA_OPTS=' -Xms1g -Xmx1g' -d -p 8080:8080 jenkins 
 ```
 
 ### Plugins
